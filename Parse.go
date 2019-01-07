@@ -1,4 +1,7 @@
 package config
+//create by libiao 20190107
+//support json configFile
+//sample like config.Parse(*s interface{},filename string) ,s is a struct
 
 
 import (
@@ -10,15 +13,18 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-
-//create by libiao 20190107
-//support json configFile
-//sample like config.Parse(*s interface{},filename string) ,s is a struct
-
-
+type Bytes = []byte
 
 //将yaml 文件转为换struct
-func  FormatYAML(b Bytes, v interface{}) error{
+
+type HandleFuncParse func(b Bytes, v interface{}) error
+func (p HandleFuncParse) StartParse(b Bytes, v interface{}){
+	p(b,v)
+}
+
+
+
+func  Yaml(b Bytes, v interface{}) error{
 	return yaml.Unmarshal(b,v)
 }
 
@@ -37,7 +43,7 @@ func Parse(file string,config interface{}) (err error){
 	suffix:=path.Ext(fileWithDirectory)
 	switch suffix{
 	case ".yaml":
-		err=FormatYAML(b,config)
+		err=Yaml(b,config)
 	}
 	return err
 }
